@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daby English Expressions - Lessons & Practice</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- jsPDF for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c; /* Dark background inspired by Netflix */
+            background-image: radial-gradient(at 50% 0%, rgba(255, 0, 0, 0.15) 0%, transparent 70%),
+                              radial-gradient(at 0% 100%, rgba(255, 165, 0, 0.15) 0%, transparent 70%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #e2e8f0; /* Light gray text for contrast */
+        }
+        .container {
+            max-width: 960px; /* Increased max-width for better content display */
+            margin: 0 auto;
+            padding: 1.5rem;
+            flex-grow: 1;
+        }
+        .lesson-card {
+            background-color: #2d3748; /* Slightly lighter dark background for cards */
+            border-radius: 1rem; /* Rounded corners */
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3); /* Deeper shadow */
+            margin-bottom: 2rem;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease-in-out;
+        }
+        .lesson-card:hover {
+            transform: translateY(-5px);
+        }
+        .headline {
+            color: #ef4444; /* McDonald's/Burger King Red */
+            font-weight: 800; /* Extra bold */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .sub-headline {
+            color: #facc15; /* McDonald's/Burger King Yellow */
+            font-weight: 700;
+        }
+        .highlight-text {
+            color: #f87171; /* Lighter red for emphasis */
+            font-weight: 700;
+        }
+        .example-box {
+            background-color: #4a5568; /* Darker gray for example boxes */
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            border-left: 5px solid #facc15; /* Yellow border for emphasis */
+        }
+        .answer-reveal {
+            background-color: #10b981; /* Green for correct answers */
+            color: #1a202c; /* Dark text on green */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: opacity 0.5s ease-out, max-height 0.5s ease-out;
+        }
+        .answer-reveal.show {
+            opacity: 1;
+            max-height: 100px; /* Adjust as needed to fit content */
+        }
+        .check-answer-btn {
+            background-color: #facc15; /* Yellow button */
+            color: #1a202c; /* Dark text */
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px; /* Fully rounded */
+            transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        .check-answer-btn:hover {
+            background-color: #fbbf24; /* Lighter yellow on hover */
+            transform: translateY(-2px);
+        }
+        .input-field {
+            background-color: #4a5568;
+            color: #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            border: 2px solid transparent;
+            transition: border-color 0.3s ease-in-out;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #facc15;
+        }
+        footer {
+            background-color: #1a202c;
+            color: #a0aec0;
+            padding: 1.5rem;
+            text-align: center;
+            margin-top: auto; /* Pushes footer to the bottom */
+            border-top: 1px solid #2d3748;
+        }
+
+        /* Drag and Drop Styles */
+        #drag-drop-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .drag-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .drag-item {
+            background-color: #facc15;
+            color: #1a202c;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            cursor: grab;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+        .drag-item:active {
+            cursor: grabbing;
+            transform: scale(1.05);
+        }
+        .drop-zones {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .drop-zone {
+            background-color: #4a5568;
+            border: 2px dashed #a0aec0;
+            border-radius: 0.5rem;
+            min-height: 60px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #e2e8f0;
+            font-style: italic;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .drop-zone.drag-over {
+            background-color: #3f4654;
+            border-color: #facc15;
+        }
+        .drop-zone.drag-correct {
+            background-color: #10b981; /* Green for correct */
+            color: #1a202c;
+            border-color: #10b981;
+        }
+        .drop-zone.drag-incorrect {
+            background-color: #ef4444; /* Red for incorrect */
+            color: #1a202c;
+            border-color: #ef4444;
+        }
+        .drop-zone.filled {
+            border-style: solid;
+        }
+        /* Style for the loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: white;
+            font-size: 1.5rem;
+            flex-direction: column;
+            gap: 1rem;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.5s linear;
+        }
+        .loading-overlay.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #facc15;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* New Reorder Exercise Styles */
+        .reorder-exercise {
+            border: 2px dashed #a0aec0;
+            border-radius: 0.5rem;
+            min-height: 50px;
+            padding: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .reorder-exercise.drag-over {
+            border-color: #facc15;
+            background-color: #3f4654;
+        }
+        .reorder-word {
+            background-color: #4a5568;
+            color: #e2e8f0;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            cursor: grab;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, opacity 0.2s ease;
+            font-weight: 600;
+        }
+        .reorder-word:active {
+            cursor: grabbing;
+        }
+        .reorder-words-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .reorder-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        .reorder-feedback {
+            margin-top: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .reorder-feedback.show {
+            opacity: 1;
+        }
+        .reorder-feedback.correct {
+            color: #10b981;
+        }
+        .reorder-feedback.incorrect {
+            color: #ef4444;
+        }
+        .reorder-exercise-item {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            background-color: #2d3748;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="main-content">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-center my-8 headline">
+            Daby English Expressions
+        </h1>
+        <p class="text-center text-lg mb-12 text-gray-300">
+            Welcome to your guide for mastering essential English expressions for work and daily life! Let's learn together in a practical and effective way.
+        </p>
+
+        <!-- Lesson 1: Working at a company -->
+        <div class="lesson-card">
+            <h2 class="text-2xl font-bold sub-headline mb-4">Expression 1: Working at a Company</h2>
+            <p class="text-gray-200 mb-4">
+                To indicate where you are employed, the preposition <span class="highlight-text">'at'</span> is the most common and natural choice in English.
+            </p>
+
+            <div class="example-box">
+                <p class="text-gray-100 mb-2">
+                    Imagine you want to say <span class="highlight-text">{I work at a company}</span>, you would say:
+                </p>
+                <p class="text-yellow-300 font-semibold text-xl mb-4">
+                    I + work + at + (what is your company's name?)
+                </p>
+                <p class="text-gray-100">
+                    Your final answer is <span class="text-green-400 font-bold text-2xl">I work at {Google}</span>
+                </p>
+            </div>
+
+            <p class="text-gray-200 mb-4">
+                This means you provide services for Google and are paid for it.
+            </p>
+
+            <p class="text-gray-100 mb-2">
+                Now, practice!
+            </p>
+            <p class="text-yellow-300 font-semibold text-lg mb-4">
+                Where do you work?
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center gap-4">
+                <input type="text" placeholder="Your answer here..." class="flex-grow input-field">
+                <button class="check-answer-btn" data-answer="Possible answer: 'I work at [Your Company Name].'">
+                    Check answer
+                </button>
+            </div>
+            <div class="answer-reveal"></div>
+        </div>
+
+        <!-- Lesson 2: At work -->
+        <div class="lesson-card">
+            <h2 class="text-2xl font-bold sub-headline mb-4">Expression 2: At work</h2>
+            <p class="text-gray-200 mb-4">
+                When you want to say that you are physically present at your workplace, the simplest and most direct expression is <span class="highlight-text">'at work'</span>.
+            </p>
+
+            <div class="example-box">
+                <p class="text-gray-100 mb-2">
+                    Imagine you want to say <span class="highlight-text">{I'm at work}</span>, you would say:
+                </p>
+                <p class="text-yellow-300 font-semibold text-xl mb-4">
+                    I + am + at + work
+                </p>
+                <p class="text-gray-100">
+                    Your final answer is <span class="text-green-400 font-bold text-2xl">I am at work</span>
+                </p>
+                <p class="text-gray-200 mt-2">
+                    The past tense of {is} is {was}.
+                </p>
+            </div>
+
+            <p class="text-gray-200 mb-4">
+                Translate:
+            </p>
+            <p class="text-yellow-300 font-semibold text-lg mb-4">
+                I was at work.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center gap-4">
+                <input type="text" placeholder="Your answer here..." class="flex-grow input-field">
+                <button class="check-answer-btn" data-answer="Answer: 'I was at work.'">
+                    Check answer
+                </button>
+            </div>
+            <div class="answer-reveal"></div>
+        </div>
+
+        <!-- Lesson 3: Working in a department -->
+        <div class="lesson-card">
+            <h2 class="text-2xl font-bold sub-headline mb-4">Expression 3: Working in a Department</h2>
+            <p class="text-gray-200 mb-4">
+                To specify the area or department you work in within a company, we use the preposition <span class="highlight-text">'in'</span>.
+            </p>
+
+            <div class="example-box">
+                <p class="text-gray-100 mb-2">
+                    Imagine you want to say <span class="highlight-text">{I work in a department}</span>, you would say:
+                </p>
+                <p class="text-yellow-300 font-semibold text-xl mb-4">
+                    I + work + in + (what is your department's name?)
+                </p>
+                <p class="text-gray-100">
+                    Your final answer is <span class="text-green-400 font-bold text-2xl">I work in {sales}</span>
+                </p>
+                <p class="text-gray-100 mt-2">
+                    One more example:
+                </p>
+                <p class="text-green-400 font-bold text-2xl">I work in {IT}</p>
+            </div>
+
+            <p class="text-gray-200 mb-4">
+                This means you work within the sales or IT department.
+            </p>
+
+            <p class="text-gray-100 mb-2">
+                Now, you try!
+            </p>
+            <p class="text-yellow-300 font-semibold text-lg mb-4">
+                Where do you work?
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center gap-4">
+                <input type="text" placeholder="Your answer here..." class="flex-grow input-field">
+                <button class="check-answer-btn" data-answer="Possible answer: 'I work in marketing.'">
+                    Check answer
+                </button>
+            </div>
+            <div class="answer-reveal"></div>
+        </div>
+
+        <!-- Lesson 4: Living in a region -->
+        <div class="lesson-card">
+            <h2 class="text-2xl font-bold sub-headline mb-4">Expression 4: Living in a Region</h2>
+            <p class="text-gray-200 mb-4">
+                When talking about where you live, whether it's a neighborhood, city, or country, the preposition <span class="highlight-text">'in'</span> is always used to indicate a geographical area.
+            </p>
+
+            <div class="example-box">
+                <p class="text-gray-100 mb-2">
+                    Imagine you want to say <span class="highlight-text">{I live in a region}</span>, you would say:
+                </p>
+                <p class="text-yellow-300 font-semibold text-xl mb-4">
+                    I + live + in + (what is your region's name - neighborhood / city / country?)
+                </p>
+                <p class="text-gray-100">
+                    Your final answer is <span class="text-green-400 font-bold text-2xl">I live in {Salvador / Brazil}</span>
+                </p>
+                <p class="text-gray-100 mt-2">
+                    One more example:
+                </p>
+                <p class="text-green-400 font-bold text-2xl">I live in {Vila Eva}</p>
+            </div>
+
+            <p class="text-gray-200 mb-4">
+                You always use the preposition <span class="highlight-text">{in}</span> before a geographical region.
+            </p>
+
+            <p class="text-gray-100 mb-2">
+                Now, you try!
+            </p>
+            <p class="text-yellow-300 font-semibold text-lg mb-4">
+                Where do you live?
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center gap-4">
+                <input type="text" placeholder="Your answer here..." class="flex-grow input-field">
+                <button class="check-answer-btn" data-answer="Possible answer: 'I live in São Paulo.'">
+                    Check answer
+                </button>
+            </div>
+            <div class="answer-reveal"></div>
+        </div>
+
+        <!-- Lesson 5: I'm working on this project -->
+        <div class="lesson-card">
+            <h2 class="text-2xl font-bold sub-headline mb-4">Expression 5: I'm working on this project</h2>
+            <p class="text-gray-200 mb-4">
+                To indicate that you are actively engaged in a project, report, analysis, or outcome, the preposition <span class="highlight-text">'on'</span> is the most appropriate.
+            </p>
+
+            <div class="example-box">
+                <p class="text-gray-100 mb-2">
+                    Imagine you want to say <span class="highlight-text">{I'm working on this project}</span>, you would say:
+                </p>
+                <p class="text-yellow-300 font-semibold text-xl mb-4">
+                    I + am working + on + this project
+                </p>
+                <p class="text-gray-100">
+                    Your final answer is <span class="text-green-400 font-bold text-2xl">I am working on this project</span>
+                </p>
+                <p class="text-gray-100 mt-2">
+                    One more example:
+                </p>
+                <p class="text-green-400 font-bold text-2xl">I am working on the report</p>
+            </div>
+
+            <p class="text-gray-200 mb-4">
+                You always use the preposition <span class="highlight-text">{on}</span> to show you are working on a project, report, analysis, outcome, etc.
+            </p>
+
+            <p class="text-gray-100 mb-2">
+                Now, practice! Try 2 sentences.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
+                <input type="text" placeholder="First sentence here..." class="flex-grow input-field">
+                <button class="check-answer-btn" data-answer="Possible answer: 'I am working on the presentation.'">
+                    Check answer
+                </button>
+            </div>
+            <div class="answer-reveal"></div>
+
+            <div class="flex flex-col sm:flex-row items-center gap-4">
+                <input type="text" placeholder="Second sentence here..." class="flex-grow input-field">
+                <button class="check-answer-btn" data-answer="Possible answer: 'She is working on the new strategy.'">
+                    Check answer
+                </button>
+            </div>
+            <div class="answer-reveal"></div>
+        </div>
+
+        <!-- Lesson 6: Issues at work (I have got) -->
+        <div class="lesson-card">
+            <h2 class="text-2xl font-bold sub-headline mb-4">Expression 6: Issues at work (I have got)</h2>
+            <p class="text-gray-200 mb-4">
+                To express the existence of problems or situations, the form <span class="highlight-text">'have got'</span> is very common and natural in English, especially in conversation.
+            </p>
+
+            <div class="example-box">
+                <p class="text-gray-100 mb-2">
+                    Imagine you want to say <span class="highlight-text">{I have problems at work}</span>, you can use the word:
+                </p>
+                <p class="text-yellow-300 font-semibold text-xl mb-4">
+                    Issues
+                </p>
+                <p class="text-gray-100 mt-4">
+                    Now let's build a sentence:
+                </p>
+                <p class="text-gray-100 mb-2">
+                    Imagine you want to say <span class="highlight-text">{I have a problem}</span>, you would say:
+                </p>
+                <p class="text-yellow-300 font-semibold text-xl mb-4">
+                    I + have + got + an + issue
+                </p>
+                <p class="text-gray-100">
+                    Your final answer is <span class="text-green-400 font-bold text-2xl">I have got an issue</span>
+                </p>
+                <p class="text-gray-100 mt-2">
+                    Another common way to say this in the workplace is <span class="text-green-400 font-bold text-2xl">I have got a situation</span>
+                </p>
+            </div>
+
+            <p class="text-gray-200 mb-4">
+                Remember to use "I have got" instead of just "I have." You should try to make this automatic.
+            </p>
+            <ul class="list-disc list-inside text-gray-200 mb-4 ml-4">
+                <li>I have = I have got (though "I have" is also correct, "have got" is very common).</li>
+                <li>We have = We have got (though "We have" is also correct).</li>
+            </ul>
+            <p class="text-gray-200 mb-4">
+                Always use <span class="highlight-text">HAVE GOT</span> for the verb TO HAVE in the present tense when speaking.
+            </p>
+
+            <p class="text-gray-100 mb-2">
+                Now, practice! Try 3 sentences.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
+                <input type="text" placeholder="First sentence here..." class="flex-grow input-field">
+                <button class="check-answer-btn" data-answer="Possible answer: 'We have got a new client.'">
+                    Check answer
+                </button>
+            </div>
+            <div class="answer-reveal"></div>
+
+            <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
+                <input type="text" placeholder="Second sentence here..." class="flex-grow input-field">
+                <button class="check-answer-btn" data-answer="Possible answer: 'She has got a great idea.'">
+                    Check answer
+                </button>
+            </div>
+            <div class="answer-reveal"></div>
+
+            <div class="flex flex-col sm:flex-row items-center gap-4">
+                <input type="text" placeholder="Third sentence here..." class="flex-grow input-field">
+                <button class="check-answer-btn" data-answer="Possible answer: 'They have got a lot of work.'">
+                    Check answer
+                </button>
+            </div>
+            <div class="answer-reveal"></div>
+        </div>
+
+        <!-- Lesson 7: A complex and serious problem (A serious matter) -->
+        <div class="lesson-card">
+            <h2 class="text-2xl font-bold sub-headline mb-4">Expression 7: A Complex and Serious Problem</h2>
+            <p class="text-gray-200 mb-4">
+                When a situation is more serious, we use the expression <span class="highlight-text">'a serious matter'</span>.
+            </p>
+
+            <div class="example-box">
+                <p class="text-gray-100 mb-2">
+                    Imagine you want to say <span class="highlight-text">{a complex and serious problem}</span>, you would say:
+                </p>
+                <p class="text-yellow-300 font-semibold text-xl mb-4">
+                    A serious matter
+                </p>
+                <p class="text-gray-100">
+                    Your final answer is <span class="text-green-400 font-bold text-2xl">We have GOT a serious matter (We are having a serious problem)</span>
+                </p>
+                <p class="text-gray-100 mt-2">
+                    One more example:
+                </p>
+                <p class="text-green-400 font-bold text-2xl">We haD a serious matter (use 'had' instead of 'have got' to indicate the past)</p>
+            </div>
+
+            <p class="text-gray-200 mb-4">
+                Translate:
+            </p>
+            <p class="text-yellow-300 font-semibold text-lg mb-4">
+                I have a serious problem at work.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center gap-4">
+                <input type="text" placeholder="Your answer here..." class="flex-grow input-field">
+                <button class="check-answer-btn" data-answer="Answer: 'I have got a serious matter at work.'">
+                    Check answer
+                </button>
+            </div>
+            <div class="answer-reveal"></div>
+        </div>
+
+        <!-- Lesson 8: To schedule a meeting (We need to schedule/set up a meeting) -->
+        <div class="lesson-card">
+            <h2 class="text-2xl font-bold sub-headline mb-4">Expression 8: To Schedule a Meeting</h2>
+            <p class="text-gray-200 mb-4">
+                To express the need to schedule something, <span class="highlight-text">'need'</span> is the most common word. For a more formal and elegant tone, especially in British English, you can use <span class="highlight-text">'shall'</span>.
+            </p>
+
+            <div class="example-box">
+                <p class="text-gray-100 mb-2">
+                    Imagine you want to say <span class="highlight-text">{a complex and serious problem}</span>, and you need to <span class="highlight-text">(SCHEDULE A MEETING)</span>, you would say:
+                </p>
+                <p class="text-yellow-300 font-semibold text-xl mb-4">
+                    {a complex and serious problem} = A serious matter
+                </p>
+                <p class="text-yellow-300 font-semibold text-xl mb-4">
+                    We have = We have got
+                </p>
+                <p class="text-gray-100">
+                    Final: <span class="text-green-400 font-bold text-2xl">We have got a serious matter</span>
+                </p>
+                <p class="text-gray-100 mt-4">
+                    Now, we need to say <span class="highlight-text">(WE NEED TO SCHEDULE A MEETING)</span>, you would say:
+                </p>
+                <p class="text-green-400 font-bold text-2xl">We need to schedule a meeting.</p>
+            </div>
+
+            <p class="text-gray-200 mb-4">
+                You can use <span class="highlight-text">{should or must}</span>, but in English, try to always use <span class="highlight-text">'(need)'</span>. The verb 'must' is very strong and used to indicate an obligation.
+            </p>
+            <p class="text-gray-200 mb-4">
+                To be more polite and elegant, use <span class="highlight-text">{SHALL}</span> before the verb. It sounds very classy.
+            </p>
+            <p class="text-yellow-300 font-semibold text-xl mb-4">
+                It becomes:
+            </p>
+            <p class="text-green-400 font-bold text-2xl mb-4">We shall need to schedule a meeting.</p>
+            <p class="text-gray-200 mb-4">
+                You can also use <span class="highlight-text">(SET UP)</span> for <span class="highlight-text">(SCHEDULE)</span>
+            </p>
+            <p class="text-green-400 font-bold text-2xl mb-4">We shall SET UP a meeting.</p>
+            <p class="text-gray-200 mb-4">
+                To schedule (verb - to be conjugated) means to make an appointment.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center gap-4">
+                <input type="text" placeholder="Your answer here..." class="flex-grow input-field">
+                <button class="check-answer-btn" data-answer="Answer: 'I shall need to schedule an urgent meeting.' or 'I need to schedule an urgent meeting.'">
+                    Check answer
+                </button>
+            </div>
+            <div class="answer-reveal"></div>
+        </div>
+
+        <!-- Lesson 9: I am at a meeting -->
+        <div class="lesson-card">
+            <h2 class="text-2xl font-bold sub-headline mb-4">Expression 9: I am at a meeting</h2>
+            <p class="text-gray-200 mb-4">
+                To indicate that you are participating in or attending a meeting, the preposition <span class="highlight-text">'at'</span> is the most appropriate.
+            </p>
+
+            <div class="example-box">
+                <p class="text-gray-100 mb-2">
+                    Imagine you want to say <span class="highlight-text">{I am in a meeting}</span>, you would say:
+                </p>
+                <p class="text-yellow-300 font-semibold text-xl mb-4">
+                    I + am + at + a + meeting
+                </p>
+                <p class="text-gray-100">
+                    Your final answer is <span class="text-green-400 font-bold text-2xl">I am at a meeting</span>
+                </p>
+            </div>
+
+            <p class="text-gray-200 mb-4">
+                This means you are participating in or attending a meeting.
+            </p>
+
+            <p class="text-gray-200 mb-4">
+                Translate:
+            </p>
+            <p class="text-yellow-300 font-semibold text-lg mb-4">
+                We are in a meeting.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center gap-4">
+                <input type="text" placeholder="Your answer here..." class="flex-grow input-field">
+                <button class="check-answer-btn" data-answer="Answer: 'We are at a meeting.'">
+                    Check answer
+                </button>
+            </div>
+            <div class="answer-reveal"></div>
+        </div>
+
+        <!-- Lesson 10: I am joining the meeting / I will join in 5 minutes -->
+        <div class="lesson-card">
+            <h2 class="text-2xl font-bold sub-headline mb-4">Expression 10: Joining a Meeting</h2>
+            <p class="text-gray-200 mb-4">
+                When you are about to join or have already joined an online meeting, use <span class="highlight-text">'in'</span> for a quick response or <span class="highlight-text">'have joined'</span> for a more complete version. To indicate you are going to participate, use <span class="highlight-text">'join'</span>.
+            </p>
+
+            <div class="example-box">
+                <p class="text-gray-100 mb-2">
+                    Imagine you want to say <span class="highlight-text">{I am online for the meeting}</span>, you would say:
+                </p>
+                <p class="text-yellow-300 font-semibold text-xl mb-4">
+                    I + am + in (for a quick and common response at work when someone is waiting)
+                </p>
+                <p class="text-yellow-300 font-semibold text-xl mb-4">
+                    I + have joined + the + meeting (also a quick response, and a more complete version)
+                </p>
+                <p class="text-gray-100 mt-4">
+                    Let's elaborate:
+                </p>
+                <p class="text-gray-100 mb-2">
+                    Imagine you want to say <span class="highlight-text">(I will join in 5 minutes)</span>, you would say:
+                </p>
+                <p class="text-yellow-300 font-semibold text-xl mb-4">
+                    I + will + join + YOU + in + 5 minutes
+                </p>
+                <p class="text-gray-100">
+                    Your final answer is <span class="text-green-400 font-bold text-2xl">I will join YOU in 5 minutes (avoid using "connect")</span>
+                </p>
+            </div>
+
+            <p class="text-gray-200 mb-4">
+                This means I will participate in the meeting in 5 minutes.
+            </p>
+            <p class="text-gray-200 mb-4">
+                One more thing:
+            </p>
+            <p class="text-yellow-300 font-semibold text-lg mb-4">
+                Click to join the meeting in English:
+            </p>
+            <p class="text-green-400 font-bold text-2xl mb-4">Click to join the meeting.</p>
+            <p class="text-gray-200 mb-4">
+                Final conclusion: let's use <span class="highlight-text">(join)</span> to show that you will join, have joined, or participated in the meeting.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center gap-4">
+                <input type="text" placeholder="Your answer here..." class="flex-grow input-field">
+                <button class="check-answer-btn" data-answer="Answer: 'Click here to join and I will join you in 10 minutes.'">
+                    Check answer
+                </button>
+            </div>
+            <div class="answer-reveal"></div>
+        </div>
+
+        <!-- Lesson 11: I attend meetings -->
+        <div class="lesson-card">
+            <h2 class="text-2xl font-bold sub-headline mb-4">Expression 11: I Attend Meetings</h2>
+            <p class="text-gray-200 mb-4">
+                To express that you actively participate in meetings, the verb <span class="highlight-text">'attend'</span> is the most appropriate.
+            </p>
+
+            <div class="example-box">
+                <p class="text-gray-100 mb-2">
+                    Imagine you want to say <span class="highlight-text">(I participate in meetings)</span>, you would say:
+                </p>
+                <p class="text-yellow-300 font-semibold text-xl mb-4">
+                    I + attend + meetings
+                </p>
+                <p class="text-gray-100">
+                    Your final answer is <span class="text-green-400 font-bold text-2xl">I attend meetings (do not use 'in' after the verb attend)</span>
+                </p>
+            </div>
+
+            <p class="text-gray-200 mb-4">
+                This means I actively participate in meetings.
+            </p>
+
+            <div class="example-box">
+                <p class="text-gray-100 mb-2">
+                    Imagine in the past, you say <span class="highlight-text">(I participated in 2 meetings)</span>, you would say:
+                </p>
+                <p class="text-green-400 font-bold text-2xl">I attended 2 meetings</p>
+            </div>
+
+            <p class="text-gray-200 mb-4">
+                Do not use the verb "participate."
+            </p>
+            <p class="text-gray-200 mb-4">
+                For both "participating in" and "watching" a meeting, the main verb will always be **attend**. You can also use **join**.
+            </p>
+
+            <div class="reorder-exercise-item">
+                <h3 class="text-xl font-semibold mb-4 text-gray-200">Exercise 11:</h3>
+                <p class="text-gray-300 mb-4">
+                    Tomorrow I will attend 3 meetings with clients.
+                </p>
+                <div class="reorder-words-container" data-correct-sentence="Tomorrow I will attend 3 meetings with clients.">
+                    <div class="reorder-word" draggable="true">Tomorrow</div>
+                    <div class="reorder-word" draggable="true">will</div>
+                    <div class="reorder-word" draggable="true">I</div>
+                    <div class="reorder-word" draggable="true">clients.</div>
+                    <div class="reorder-word" draggable="true">meetings</div>
+                    <div class="reorder-word" draggable="true">with</div>
+                    <div class="reorder-word" draggable="true">attend</div>
+                    <div class="reorder-word" draggable="true">3</div>
+                </div>
+                <div class="reorder-exercise"></div>
+                <div class="reorder-buttons mt-4">
+                    <button class="check-reorder-btn check-answer-btn">Check</button>
+                    <button class="reset-reorder-btn check-answer-btn">Reset</button>
+                </div>
+                <div class="reorder-feedback"></div>
+            </div>
+        </div>
+
+        <!-- Lesson 12: I will reply you shortly -->
+        <div class="lesson-card">
+            <h2 class="text-2xl font-bold sub-headline mb-4">Expression 12: I will reply you shortly</h2>
+            <p class="text-gray-200 mb-4">
+                To indicate that you will reply in a short amount of time, the expression <span class="highlight-text">'reply you shortly'</span> is very professional and polite.
+            </p>
+
+            <div class="example-box">
+                <p class="text-gray-100 mb-2">
+                    Imagine you want to say <span class="highlight-text">(I will reply to you shortly)</span>, you would say:
+                </p>
+                <p class="text-yellow-300 font-semibold text-xl mb-4">
+                    I + shall + reply + you + shortly
+                </p>
+                <p class="text-gray-100">
+                    Your final answer is <span class="text-green-400 font-bold text-2xl">I shall reply you shortly</span>
+                </p>
+            </div>
+
+            <p class="text-gray-200 mb-4">
+                This means I'll respond very soon.
+            </p>
+            <p class="text-gray-200 mb-4">
+                It's worth noting a few points here:
+            </p>
+            <ul class="list-disc list-inside text-gray-200 mb-4 ml-4">
+                <li>I = for I.</li>
+                <li>Shall - to show the future, and notice I **didn't** use 'will'. 'Shall' is more **British** and elegant. But if **you** want to use 'will', feel free.</li>
+                <li>I used 'reply' to mean to answer, especially in **writing**.</li>
+                <li>You = to address the person in the conversation.</li>
+                <li>Shortly = is an **expression** to say soon / in a short time.</li>
+            </ul>
+
+            <div class="reorder-exercise-item">
+                <h3 class="text-xl font-semibold mb-4 text-gray-200">Exercise 12:</h3>
+                <p class="text-gray-300 mb-4">
+                    I will reply to the client shortly.
+                </p>
+                <div class="reorder-words-container" data-correct-sentence="I shall reply the client shortly.">
+                    <div class="reorder-word" draggable="true">I</div>
+                    <div class="reorder-word" draggable="true">shortly.</div>
+                    <div class="reorder-word" draggable="true">shall</div>
+                    <div class="reorder-word" draggable="true">the</div>
+                    <div class="reorder-word" draggable="true">client</div>
+                    <div class="reorder-word" draggable="true">reply</div>
+                </div>
+                <div class="reorder-exercise"></div>
+                <div class="reorder-buttons mt-4">
+                    <button class="check-reorder-btn check-answer-btn">Check</button>
+                    <button class="reset-reorder-btn check-answer-btn">Reset</button>
+                </div>
+                <div class="reorder-feedback"></div>
+            </div>
+        </div>
+
+        <!-- Lesson 13: I'm analyzing -->
+        <div class="lesson-card">
+            <h2 class="text-2xl font-bold sub-headline mb-4">Expression 13: I'm Analyzing</h2>
+            <p class="text-gray-200 mb-4">
+                To say that you are working on something or checking it, use <span class="highlight-text">'I am working on'</span>. For more advanced English, try <span class="highlight-text">'I am going through'</span> or <span class="highlight-text">'I am running through'</span>.
+            </p>
+
+            <div class="example-box">
+                <p class="text-gray-100 mb-2">
+                    Imagine you want to say <span class="highlight-text">(I am analyzing)</span>, you would say:
+                </p>
+                <p class="text-yellow-300 font-semibold text-xl mb-4">
+                    I am working on (something - it could be a project, report, analysis, contract, issue, etc.)
+                </p>
+                <p class="text-gray-100">
+                    Your final answer is <span class="text-green-400 font-bold text-2xl">I am working on the contract or you can try I am working on the renewal.</span>
+                </p>
+            </div>
+
+            <p class="text-gray-200 mb-4">
+                This means I'm putting effort into working on the contract.
+            </p>
+            <p class="text-gray-200 mb-4">
+                It's worth noting a few points here:
+            </p>
+            <ul class="list-disc list-inside text-gray-200 mb-4 ml-4">
+                <li>I'm analyzing or I'm checking = I am working on.</li>
+                <li>But in more **advanced** English, try 'I am going through' / 'I am running through'.</li>
+                <li>Avoid using 'checking' and 'analysing'. They can sound like weaker English.</li>
+            </ul>
+
+            <div class="reorder-exercise-item">
+                <h3 class="text-xl font-semibold mb-4 text-gray-200">Exercise 13:</h3>
+                <p class="text-gray-300 mb-4">
+                    We are checking the document.
+                </p>
+                <div class="reorder-words-container" data-correct-sentence="We are going through the document.">
+                    <div class="reorder-word" draggable="true">are</div>
+                    <div class="reorder-word" draggable="true">the</div>
+                    <div class="reorder-word" draggable="true">document.</div>
+                    <div class="reorder-word" draggable="true">We</div>
+                    <div class="reorder-word" draggable="true">through</div>
+                    <div class="reorder-word" draggable="true">going</div>
+                </div>
+                <div class="reorder-exercise"></div>
+                <div class="reorder-buttons mt-4">
+                    <button class="check-reorder-btn check-answer-btn">Check</button>
+                    <button class="reset-reorder-btn check-answer-btn">Reset</button>
+                </div>
+                <div class="reorder-feedback"></div>
+            </div>
+        </div>
+
+        <!-- Lesson 14: We will issue a tax invoice -->
+        <div class="lesson-card">
+            <h2 class="text-2xl font-bold sub-headline mb-4">Expression 14: We will issue a tax invoice</h2>
+            <p class="text-gray-200 mb-4">
+                To express the action of issuing a document, such as a tax invoice, use the verb <span class="highlight-text">'issue'</span>.
+            </p>
+
+            <div class="example-box">
+                <p class="text-gray-100 mb-2">
+                    Imagine you want to say <span class="highlight-text">(we will issue a tax invoice)</span>, you would say:
+                </p>
+                <p class="text-yellow-300 font-semibold text-xl mb-4">
+                    We + shall + issue + a tax invoice
+                </p>
+                <p class="text-gray-100">
+                    Your final answer is <span class="text-green-400 font-bold text-2xl">We shall issue a tax invoice</span>
+                </p>
+            </div>
+
+            <p class="text-gray-200 mb-4">
+                It's worth noting a few points here:
+            </p>
+            <ul class="list-disc list-inside text-gray-200 mb-4 ml-4">
+                <li>We + a verb (we will issue) **to show the future**, and I used 'shall' plus the verb.</li>
+                <li>Issue = is also a verb to say you are issuing a document.</li>
+                <li>Tax invoice = is the fiscal note.</li>
+            </ul>
+
+            <div class="reorder-exercise-item">
+                <h3 class="text-xl font-semibold mb-4 text-gray-200">Exercise 14:</h3>
+                <p class="text-gray-300 mb-4">
+                    I issued the tax invoice.
+                </p>
+                <div class="reorder-words-container" data-correct-sentence="I issued the tax invoice.">
+                    <div class="reorder-word" draggable="true">I</div>
+                    <div class="reorder-word" draggable="true">tax</div>
+                    <div class="reorder-word" draggable="true">issued</div>
+                    <div class="reorder-word" draggable="true">the</div>
+                    <div class="reorder-word" draggable="true">invoice.</div>
+                </div>
+                <div class="reorder-exercise"></div>
+                <div class="reorder-buttons mt-4">
+                    <button class="check-reorder-btn check-answer-btn">Check</button>
+                    <button class="reset-reorder-btn check-answer-btn">Reset</button>
+                </div>
+                <div class="reorder-feedback"></div>
+            </div>
+        </div>
+
+        <!-- NEW: Quick Reference Section -->
+        <div class="lesson-card mt-12">
+            <h2 class="text-3xl font-bold headline mb-6">Quick Reference of Expressions</h2>
+            <p class="text-gray-300 mb-6">
+                Here's a summary of the expressions we've learned, with a brief explanation of the context in which they are used and the best way to understand them to avoid common mistakes for a Portuguese speaker.
+            </p>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-bold sub-headline mb-2">Work and Location</h3>
+                <p class="text-gray-200">
+                    <strong>I work at {company}</strong>: Use <span class="highlight-text">'at'</span> for the name of the company where you work. Think of "at" as the "point" or specific location of the company.
+                </p>
+                <p class="text-gray-200 mt-2">
+                    <strong>I work in {department}</strong>: Use <span class="highlight-text">'in'</span> for the specific sector or work area. Think of "in" as "inside of" a department.
+                </p>
+                <p class="text-gray-200 mt-2">
+                    <strong>I live in {region}</strong>: Use <span class="highlight-text">'in'</span> to indicate that you live inside a larger geographical area, such as a city or country. It is the standard preposition for residential location.
+                </p>
+            </div>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-bold sub-headline mb-2">Projects and Tasks</h3>
+                <p class="text-gray-200">
+                    <strong>I am working on {project}</strong>: Use <span class="highlight-text">'on'</span> to show that you are actively engaged in a task, project, report, etc. It is the most natural way to say "I am working on" something.
+                </p>
+                <p class="text-gray-200 mt-2">
+                    <strong>I am working on the contract</strong>: A direct application of the rule above. You are dedicating yourself to that particular task.
+                </p>
+                <p class="text-gray-200 mt-2">
+                    <strong>I am going through {document}</strong>: A more advanced expression for "I am analyzing" or "I am checking." It sounds more professional than "I am checking."
+                </p>
+            </div>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-bold sub-headline mb-2">Communication and Meetings</h3>
+                <p class="text-gray-200">
+                    <strong>I am at a meeting</strong>: Use <span class="highlight-text">'at'</span> to indicate that you are participating in a meeting. It is the most direct and common form.
+                </p>
+                <p class="text-gray-200 mt-2">
+                    <strong>I will join you in 5 minutes</strong>: For online meetings, use <span class="highlight-text">'join'</span> instead of "connect" to indicate that you are entering. The preposition "in" indicates the countdown for the time of entry.
+                </p>
+                <p class="text-gray-200 mt-2">
+                    <strong>I shall reply you shortly</strong>: A polite and elegant way to say "I will reply soon." The <span class="highlight-text">'shall'</span> is a more formal and British alternative to <span class="highlight-text">'will'</span>.
+                </p>
+            </div>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-bold sub-headline mb-2">Problems and Corporate Actions</h3>
+                <p class="text-gray-200">
+                    <strong>I have got an issue</strong>: Use <span class="highlight-text">'have got'</span> as a natural and fluid alternative to "I have." The word "issue" is the standard term for "problem" in the workplace.
+                </p>
+                <p class="text-gray-200 mt-2">
+                    <strong>We have got a serious matter</strong>: The expression <span class="highlight-text">'a serious matter'</span> is used to indicate a "serious problem" or "a serious issue."
+                </p>
+                <p class="text-gray-200 mt-2">
+                    <strong>We shall issue a tax invoice</strong>: <span class="highlight-text">'Issue'</span> is the perfect verb for "issuing" documents like tax invoices.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Quick Drag and Drop Exercise Section -->
+        <div class="lesson-card mt-12">
+            <h2 class="text-3xl font-bold headline mb-6">Exercise: Drag and Drop</h2>
+            <p class="text-gray-300 mb-6">
+                Drag the English expression to its correct Portuguese translation.
+            </p>
+            <div id="drag-drop-container">
+                <div id="drag-items" class="drag-items">
+                    <div class="drag-item" draggable="true" data-expression="I am working on">I am working on</div>
+                    <div class="drag-item" draggable="true" data-expression="I live in">I live in</div>
+                    <div class="drag-item" draggable="true" data-expression="I am going through">I am going through</div>
+                    <div class="drag-item" draggable="true" data-expression="I will join you in 5 minutes">I will join you in 5 minutes</div>
+                    <div class="drag-item" draggable="true" data-expression="I am at a meeting">I am at a meeting</div>
+                    <div class="drag-item" draggable="true" data-expression="We have got a serious matter">We have got a serious matter</div>
+                    <div class="drag-item" draggable="true" data-expression="I have got an issue">I have got an issue</div>
+                    <div class="drag-item" draggable="true" data-expression="I shall reply you shortly">I shall reply you shortly</div>
+                    <div class="drag-item" draggable="true" data-expression="We shall issue a tax invoice">We shall issue a tax invoice</div>
+                </div>
+                
+                <div id="drop-zones" class="drop-zones mt-8">
+                    <div class="drop-zone" data-answer="I am working on">Estou trabalhando em</div>
+                    <div class="drop-zone" data-answer="I live in">Eu moro em</div>
+                    <div class="drop-zone" data-answer="I am going through">Estou analisando/verificando</div>
+                    <div class="drop-zone" data-answer="I will join you in 5 minutes">Eu entro em 5 minutos</div>
+                    <div class="drop-zone" data-answer="I am at a meeting">Estou em uma reunião</div>
+                    <div class="drop-zone" data-answer="We have got a serious matter">Temos um problema sério</div>
+                    <div class="drop-zone" data-answer="I have got an issue">Tenho um problema</div>
+                    <div class="drop-zone" data-answer="I shall reply you shortly">Eu responderei em breve</div>
+                    <div class="drop-zone" data-answer="We shall issue a tax invoice">Vamos emitir uma nota fiscal</div>
+                </div>
+                <button id="reset-button" class="check-answer-btn mt-6">Reset</button>
+            </div>
+        </div>
+
+        <!-- NEW: Reorder Sentences Exercises -->
+        <div class="lesson-card mt-12">
+            <h2 class="text-3xl font-bold headline mb-6">Sentence Ordering Exercises</h2>
+            <p class="text-gray-300 mb-6">
+                Reorder the words to form correct English sentences.
+            </p>
+            <div id="reorder-container">
+                <div class="reorder-exercise-item">
+                    <p class="text-gray-300 mb-4">Exercise 1: (I'll join you in 10 minutes)</p>
+                    <div class="reorder-words-container" data-correct-sentence="I will join you in 10 minutes.">
+                        <div class="reorder-word" draggable="true">I</div>
+                        <div class="reorder-word" draggable="true">in</div>
+                        <div class="reorder-word" draggable="true">10</div>
+                        <div class="reorder-word" draggable="true">will</div>
+                        <div class="reorder-word" draggable="true">join</div>
+                        <div class="reorder-word" draggable="true">minutes.</div>
+                        <div class="reorder-word" draggable="true">you</div>
+                    </div>
+                    <div class="reorder-exercise"></div>
+                    <div class="reorder-buttons mt-4">
+                        <button class="check-reorder-btn check-answer-btn">Check</button>
+                        <button class="reset-reorder-btn check-answer-btn">Reset</button>
+                    </div>
+                    <div class="reorder-feedback"></div>
+                </div>
+                <div class="reorder-exercise-item">
+                    <p class="text-gray-300 mb-4">Exercise 2: (We have a serious matter to discuss)</p>
+                    <div class="reorder-words-container" data-correct-sentence="We have a serious matter to discuss.">
+                        <div class="reorder-word" draggable="true">a</div>
+                        <div class="reorder-word" draggable="true">matter</div>
+                        <div class="reorder-word" draggable="true">have</div>
+                        <div class="reorder-word" draggable="true">discuss.</div>
+                        <div class="reorder-word" draggable="true">to</div>
+                        <div class="reorder-word" draggable="true">We</div>
+                        <div class="reorder-word" draggable="true">serious</div>
+                    </div>
+                    <div class="reorder-exercise"></div>
+                    <div class="reorder-buttons mt-4">
+                        <button class="check-reorder-btn check-answer-btn">Check</button>
+                        <button class="reset-reorder-btn check-answer-btn">Reset</button>
+                    </div>
+                    <div class="reorder-feedback"></div>
+                </div>
+                <div class="reorder-exercise-item">
+                    <p class="text-gray-300 mb-4">Exercise 3: (She is working on the new report)</p>
+                    <div class="reorder-words-container" data-correct-sentence="She is working on the new report.">
+                        <div class="reorder-word" draggable="true">is</div>
+                        <div class="reorder-word" draggable="true">new</div>
+                        <div class="reorder-word" draggable="true">the</div>
+                        <div class="reorder-word" draggable="true">She</div>
+                        <div class="reorder-word" draggable="true">report.</div>
+                        <div class="reorder-word" draggable="true">working</div>
+                        <div class="reorder-word" draggable="true">on</div>
+                    </div>
+                    <div class="reorder-exercise"></div>
+                    <div class="reorder-buttons mt-4">
+                        <button class="check-reorder-btn check-answer-btn">Check</button>
+                        <button class="reset-reorder-btn check-answer-btn">Reset</button>
+                    </div>
+                    <div class="reorder-feedback"></div>
+                </div>
+                <div class="reorder-exercise-item">
+                    <p class="text-gray-300 mb-4">Exercise 4: (I received an important email)</p>
+                    <div class="reorder-words-container" data-correct-sentence="I have got an important email.">
+                        <div class="reorder-word" draggable="true">an</div>
+                        <div class="reorder-word" draggable="true">email.</div>
+                        <div class="reorder-word" draggable="true">I</div>
+                        <div class="reorder-word" draggable="true">got</div>
+                        <div class="reorder-word" draggable="true">have</div>
+                        <div class="reorder-word" draggable="true">important</div>
+                    </div>
+                    <div class="reorder-exercise"></div>
+                    <div class="reorder-buttons mt-4">
+                        <button class="check-reorder-btn check-answer-btn">Check</button>
+                        <button class="reset-reorder-btn check-answer-btn">Reset</button>
+                    </div>
+                    <div class="reorder-feedback"></div>
+                </div>
+                <div class="reorder-exercise-item">
+                    <p class="text-gray-300 mb-4">Exercise 5: (We need to schedule a meeting)</p>
+                    <div class="reorder-words-container" data-correct-sentence="We need to schedule a meeting.">
+                        <div class="reorder-word" draggable="true">to</div>
+                        <div class="reorder-word" draggable="true">schedule</div>
+                        <div class="reorder-word" draggable="true">a</div>
+                        <div class="reorder-word" draggable="true">meeting.</div>
+                        <div class="reorder-word" draggable="true">need</div>
+                        <div class="reorder-word" draggable="true">We</div>
+                    </div>
+                    <div class="reorder-exercise"></div>
+                    <div class="reorder-buttons mt-4">
+                        <button class="check-reorder-btn check-answer-btn">Check</button>
+                        <button class="reset-reorder-btn check-answer-btn">Reset</button>
+                    </div>
+                    <div class="reorder-feedback"></div>
+                </div>
+                <div class="reorder-exercise-item">
+                    <p class="text-gray-300 mb-4">Exercise 6: (I will reply shortly)</p>
+                    <div class="reorder-words-container" data-correct-sentence="I shall reply you shortly.">
+                        <div class="reorder-word" draggable="true">reply</div>
+                        <div class="reorder-word" draggable="true">I</div>
+                        <div class="reorder-word" draggable="true">shall</div>
+                        <div class="reorder-word" draggable="true">you</div>
+                        <div class="reorder-word" draggable="true">shortly.</div>
+                    </div>
+                    <div class="reorder-exercise"></div>
+                    <div class="reorder-buttons mt-4">
+                        <button class="check-reorder-btn check-answer-btn">Check</button>
+                        <button class="reset-reorder-btn check-answer-btn">Reset</button>
+                    </div>
+                    <div class="reorder-feedback"></div>
+                </div>
+                <div class="reorder-exercise-item">
+                    <p class="text-gray-300 mb-4">Exercise 7: (He works in the sales department)</p>
+                    <div class="reorder-words-container" data-correct-sentence="He works in the sales department.">
+                        <div class="reorder-word" draggable="true">in</div>
+                        <div class="reorder-word" draggable="true">He</div>
+                        <div class="reorder-word" draggable="true">the</div>
+                        <div class="reorder-word" draggable="true">works</div>
+                        <div class="reorder-word" draggable="true">department.</div>
+                        <div class="reorder-word" draggable="true">sales</div>
+                    </div>
+                    <div class="reorder-exercise"></div>
+                    <div class="reorder-buttons mt-4">
+                        <button class="check-reorder-btn check-answer-btn">Check</button>
+                        <button class="reset-reorder-btn check-answer-btn">Reset</button>
+                    </div>
+                    <div class="reorder-feedback"></div>
+                </div>
+                <div class="reorder-exercise-item">
+                    <p class="text-gray-300 mb-4">Exercise 8: (I live in the city center)</p>
+                    <div class="reorder-words-container" data-correct-sentence="I live in the city center.">
+                        <div class="reorder-word" draggable="true">I</div>
+                        <div class="reorder-word" draggable="true">city</div>
+                        <div class="reorder-word" draggable="true">in</div>
+                        <div class="reorder-word" draggable="true">live</div>
+                        <div class="reorder-word" draggable="true">the</div>
+                        <div class="reorder-word" draggable="true">center.</div>
+                    </div>
+                    <div class="reorder-exercise"></div>
+                    <div class="reorder-buttons mt-4">
+                        <button class="check-reorder-btn check-answer-btn">Check</button>
+                        <button class="reset-reorder-btn check-answer-btn">Reset</button>
+                    </div>
+                    <div class="reorder-feedback"></div>
+                </div>
+                <div class="reorder-exercise-item">
+                    <p class="text-gray-300 mb-4">Exercise 9: (They attended the client meeting)</p>
+                    <div class="reorder-words-container" data-correct-sentence="They attended the client meeting.">
+                        <div class="reorder-word" draggable="true">the</div>
+                        <div class="reorder-word" draggable="true">meeting.</div>
+                        <div class="reorder-word" draggable="true">attended</div>
+                        <div class="reorder-word" draggable="true">client</div>
+                        <div class="reorder-word" draggable="true">They</div>
+                    </div>
+                    <div class="reorder-exercise"></div>
+                    <div class="reorder-buttons mt-4">
+                        <button class="check-reorder-btn check-answer-btn">Check</button>
+                        <button class="reset-reorder-btn check-answer-btn">Reset</button>
+                    </div>
+                    <div class="reorder-feedback"></div>
+                </div>
+                <div class="reorder-exercise-item">
+                    <p class="text-gray-300 mb-4">Exercise 10: (We have got some exciting news)</p>
+                    <div class="reorder-words-container" data-correct-sentence="We have got some exciting news.">
+                        <div class="reorder-word" draggable="true">We</div>
+                        <div class="reorder-word" draggable="true">some</div>
+                        <div class="reorder-word" draggable="true">got</div>
+                        <div class="reorder-word" draggable="true">exciting</div>
+                        <div class="reorder-word" draggable="true">have</div>
+                        <div class="reorder-word" draggable="true">news.</div>
+                    </div>
+                    <div class="reorder-exercise"></div>
+                    <div class="reorder-buttons mt-4">
+                        <button class="check-reorder-btn check-answer-btn">Check</button>
+                        <button class="reset-reorder-btn check-answer-btn">Reset</button>
+                    </div>
+                    <div class="reorder-feedback"></div>
+                </div>
+                <div class="reorder-exercise-item">
+                    <p class="text-gray-300 mb-4">Exercise 11: (I am in a meeting right now)</p>
+                    <div class="reorder-words-container" data-correct-sentence="I am at a meeting right now.">
+                        <div class="reorder-word" draggable="true">at</div>
+                        <div class="reorder-word" draggable="true">meeting</div>
+                        <div class="reorder-word" draggable="true">am</div>
+                        <div class="reorder-word" draggable="true">I</div>
+                        <div class="reorder-word" draggable="true">right</div>
+                        <div class="reorder-word" draggable="true">a</div>
+                        <div class="reorder-word" draggable="true">now.</div>
+                    </div>
+                    <div class="reorder-exercise"></div>
+                    <div class="reorder-buttons mt-4">
+                        <button class="check-reorder-btn check-answer-btn">Check</button>
+                        <button class="reset-reorder-btn check-answer-btn">Reset</button>
+                    </div>
+                    <div class="reorder-feedback"></div>
+                </div>
+                <div class="reorder-exercise-item">
+                    <p class="text-gray-300 mb-4">Exercise 12: (She issued the tax invoice yesterday)</p>
+                    <div class="reorder-words-container" data-correct-sentence="She issued the tax invoice yesterday.">
+                        <div class="reorder-word" draggable="true">the</div>
+                        <div class="reorder-word" draggable="true">She</div>
+                        <div class="reorder-word" draggable="true">issued</div>
+                        <div class="reorder-word" draggable="true">yesterday.</div>
+                        <div class="reorder-word" draggable="true">tax</div>
+                        <div class="reorder-word" draggable="true">invoice</div>
+                    </div>
+                    <div class="reorder-exercise"></div>
+                    <div class="reorder-buttons mt-4">
+                        <button class="check-reorder-btn check-answer-btn">Check</button>
+                        <button class="reset-reorder-btn check-answer-btn">Reset</button>
+                    </div>
+                    <div class="reorder-feedback"></div>
+                </div>
+                <div class="reorder-exercise-item">
+                    <p class="text-gray-300 mb-4">Exercise 13: (I am going through the document)</p>
+                    <div class="reorder-words-container" data-correct-sentence="I am going through the document.">
+                        <div class="reorder-word" draggable="true">going</div>
+                        <div class="reorder-word" draggable="true">am</div>
+                        <div class="reorder-word" draggable="true">through</div>
+                        <div class="reorder-word" draggable="true">document.</div>
+                        <div class="reorder-word" draggable="true">I</div>
+                        <div class="reorder-word" draggable="true">the</div>
+                    </div>
+                    <div class="reorder-exercise"></div>
+                    <div class="reorder-buttons mt-4">
+                        <button class="check-reorder-btn check-answer-btn">Check</button>
+                        <button class="reset-reorder-btn check-answer-btn">Reset</button>
+                    </div>
+                    <div class="reorder-feedback"></div>
+                </div>
+                <div class="reorder-exercise-item">
+                    <p class="text-gray-300 mb-4">Exercise 14: (The project is almost finished)</p>
+                    <div class="reorder-words-container" data-correct-sentence="The project is almost finished.">
+                        <div class="reorder-word" draggable="true">The</div>
+                        <div class="reorder-word" draggable="true">is</div>
+                        <div class="reorder-word" draggable="true">project</div>
+                        <div class="reorder-word" draggable="true">almost</div>
+                        <div class="reorder-word" draggable="true">finished.</div>
+                    </div>
+                    <div class="reorder-exercise"></div>
+                    <div class="reorder-buttons mt-4">
+                        <button class="check-reorder-btn check-answer-btn">Check</button>
+                        <button class="reset-reorder-btn check-answer-btn">Reset</button>
+                    </div>
+                    <div class="reorder-feedback"></div>
+                </div>
+                <div class="reorder-exercise-item">
+                    <p class="text-gray-300 mb-4">Exercise 15: (We must work on this together)</p>
+                    <div class="reorder-words-container" data-correct-sentence="We must work on this together.">
+                        <div class="reorder-word" draggable="true">must</div>
+                        <div class="reorder-word" draggable="true">work</div>
+                        <div class="reorder-word" draggable="true">on</div>
+                        <div class="reorder-word" draggable="true">We</div>
+                        <div class="reorder-word" draggable="true">together.</div>
+                        <div class="reorder-word" draggable="true">this</div>
+                    </div>
+                    <div class="reorder-exercise"></div>
+                    <div class="reorder-buttons mt-4">
+                        <button class="check-reorder-btn check-answer-btn">Check</button>
+                        <button class="reset-reorder-btn check-answer-btn">Reset</button>
+                    </div>
+                    <div class="reorder-feedback"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-center mt-12 mb-8">
+            <button id="export-pdf-btn" class="check-answer-btn px-8 py-3">Export to PDF</button>
+        </div>
+    </div>
+    
+    <!-- Loading overlay for PDF generation -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loader"></div>
+        <span>Generating PDF...</span>
+        <span>This may take a few seconds.</span>
+    </div>
+
+    <footer>
+        <p>Daby &copy; 2025 copyright</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Logic for the text input exercises
+            const checkButtons = document.querySelectorAll('.check-answer-btn:not(.check-reorder-btn):not(.reset-reorder-btn)');
+
+            checkButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const parentDiv = button.closest('.lesson-card').querySelector('.answer-reveal');
+                    let answerReveal = button.closest('.flex').nextElementSibling;
+                    
+                    if (!answerReveal || !answerReveal.classList.contains('answer-reveal')) {
+                        answerReveal = parentDiv;
+                    }
+
+                    const answerText = button.dataset.answer;
+
+                    if (answerReveal.classList.contains('show')) {
+                        answerReveal.classList.remove('show');
+                        setTimeout(() => {
+                            answerReveal.innerHTML = '';
+                        }, 500);
+                    } else {
+                        answerReveal.innerHTML = `<p>${answerText}</p>`;
+                        answerReveal.classList.add('show');
+                    }
+                });
+            });
+
+            // Logic for the original drag and drop exercise
+            const dragItems = document.querySelectorAll('.drag-item');
+            const dropZones = document.querySelectorAll('.drop-zone');
+            const resetButton = document.getElementById('reset-button');
+            
+            let draggedItem = null;
+
+            dragItems.forEach(item => {
+                item.addEventListener('dragstart', (e) => {
+                    draggedItem = e.target;
+                    e.dataTransfer.setData('text/plain', e.target.dataset.expression);
+                    e.target.classList.add('opacity-50');
+                });
+
+                item.addEventListener('dragend', (e) => {
+                    e.target.classList.remove('opacity-50');
+                });
+            });
+
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    if (!e.target.classList.contains('filled')) {
+                        e.target.classList.add('drag-over');
+                    }
+                });
+
+                zone.addEventListener('dragleave', (e) => {
+                    e.target.classList.remove('drag-over');
+                });
+
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    e.target.classList.remove('drag-over');
+                    
+                    if (e.target.classList.contains('filled')) {
+                        return;
+                    }
+
+                    const draggedData = e.dataTransfer.getData('text/plain');
+                    const dropZoneAnswer = e.target.dataset.answer;
+                    
+                    const originalExpression = draggedItem.textContent;
+
+                    if (draggedData.trim() === dropZoneAnswer.trim()) {
+                        e.target.classList.add('drag-correct', 'filled');
+                        e.target.textContent = originalExpression;
+                        draggedItem.parentNode.removeChild(draggedItem);
+                    } else {
+                        e.target.classList.add('drag-incorrect');
+                        setTimeout(() => {
+                            e.target.classList.remove('drag-incorrect');
+                        }, 1000);
+                    }
+                });
+            });
+
+            resetButton.addEventListener('click', () => {
+                dropZones.forEach(zone => {
+                    zone.classList.remove('drag-correct', 'drag-incorrect', 'filled');
+                    switch(zone.dataset.answer) {
+                        case 'I am working on': zone.textContent = 'Estou trabalhando em'; break;
+                        case 'I live in': zone.textContent = 'Eu moro em'; break;
+                        case 'I am going through': zone.textContent = 'Estou analisando/verificando'; break;
+                        case 'I will join you in 5 minutes': zone.textContent = 'Eu entro em 5 minutos'; break;
+                        case 'I am at a meeting': zone.textContent = 'Estou em uma reunião'; break;
+                        case 'We have got a serious matter': zone.textContent = 'Temos um problema sério'; break;
+                        case 'I have got an issue': zone.textContent = 'Tenho um problema'; break;
+                        case 'I shall reply you shortly': zone.textContent = 'Eu responderei em breve'; break;
+                        case 'We shall issue a tax invoice': zone.textContent = 'Vamos emitir uma nota fiscal'; break;
+                    }
+                });
+                
+                const dragItemsContainer = document.getElementById('drag-items');
+                const expressions = [
+                    {text: "I am working on", data: "I am working on"},
+                    {text: "I live in", data: "I live in"},
+                    {text: "I am going through", data: "I am going through"},
+                    {text: "I will join you in 5 minutes", data: "I will join you in 5 minutes"},
+                    {text: "I am at a meeting", data: "I am at a meeting"},
+                    {text: "We have got a serious matter", data: "We have got a serious matter"},
+                    {text: "I have got an issue", data: "I have got an issue"},
+                    {text: "I shall reply you shortly", data: "I shall reply you shortly"},
+                    {text: "We shall issue a tax invoice", data: "We shall issue a tax invoice"}
+                ];
+
+                dragItemsContainer.innerHTML = '';
+                expressions.forEach(exp => {
+                    const div = document.createElement('div');
+                    div.className = 'drag-item';
+                    div.draggable = true;
+                    div.dataset.expression = exp.data;
+                    div.textContent = exp.text;
+                    dragItemsContainer.appendChild(div);
+                });
+
+                const newDragItems = document.querySelectorAll('.drag-item');
+                newDragItems.forEach(item => {
+                    item.addEventListener('dragstart', (e) => {
+                        draggedItem = e.target;
+                        e.dataTransfer.setData('text/plain', e.target.dataset.expression);
+                        e.target.classList.add('opacity-50');
+                    });
+                    item.addEventListener('dragend', (e) => {
+                        e.target.classList.remove('opacity-50');
+                    });
+                });
+            });
+
+            // Logic for the new reorder sentences exercises
+            document.querySelectorAll('.reorder-exercise-item').forEach(item => {
+                const wordsContainer = item.querySelector('.reorder-words-container');
+                const sentenceBuilder = item.querySelector('.reorder-exercise');
+                const checkBtn = item.querySelector('.check-reorder-btn');
+                const resetBtn = item.querySelector('.reset-reorder-btn');
+                const feedbackDiv = item.querySelector('.reorder-feedback');
+                
+                let words = Array.from(wordsContainer.children).map(word => word.cloneNode(true));
+                words = words.sort(() => Math.random() - 0.5);
+                words.forEach(word => wordsContainer.appendChild(word));
+
+                let draggedWord = null;
+
+                wordsContainer.addEventListener('dragstart', (e) => {
+                    draggedWord = e.target;
+                    e.dataTransfer.setData('text/plain', e.target.textContent.trim());
+                    e.target.classList.add('opacity-50');
+                });
+                
+                wordsContainer.addEventListener('dragend', (e) => {
+                    e.target.classList.remove('opacity-50');
+                });
+                
+                sentenceBuilder.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    sentenceBuilder.classList.add('drag-over');
+                });
+                
+                sentenceBuilder.addEventListener('dragleave', () => {
+                    sentenceBuilder.classList.remove('drag-over');
+                });
+                
+                sentenceBuilder.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    sentenceBuilder.classList.remove('drag-over');
+                    if (draggedWord) {
+                        const droppedWord = draggedWord.cloneNode(true);
+                        droppedWord.draggable = false;
+                        sentenceBuilder.appendChild(droppedWord);
+                        draggedWord.remove();
+                        draggedWord = null;
+                    }
+                });
+
+                checkBtn.addEventListener('click', () => {
+                    const correctSentence = wordsContainer.dataset.correctSentence.trim().toLowerCase();
+                    const userSentence = Array.from(sentenceBuilder.children)
+                        .map(word => word.textContent.trim().toLowerCase())
+                        .join(' ');
+                    
+                    feedbackDiv.classList.remove('correct', 'incorrect');
+                    feedbackDiv.classList.add('show');
+
+                    if (userSentence === correctSentence.replace(/\.$/, '')) {
+                        feedbackDiv.textContent = "Correct! ✅";
+                        feedbackDiv.classList.add('correct');
+                    } else {
+                        feedbackDiv.textContent = "Incorrect. Try again.";
+                        feedbackDiv.classList.add('incorrect');
+                    }
+                });
+
+                resetBtn.addEventListener('click', () => {
+                    sentenceBuilder.innerHTML = '';
+                    wordsContainer.innerHTML = '';
+                    
+                    const originalWords = wordsContainer.dataset.correctSentence.split(' ').map(word => {
+                        const div = document.createElement('div');
+                        div.className = 'reorder-word';
+                        div.draggable = true;
+                        div.textContent = word;
+                        return div;
+                    });
+                    
+                    originalWords.sort(() => Math.random() - 0.5);
+                    originalWords.forEach(word => wordsContainer.appendChild(word));
+
+                    feedbackDiv.classList.remove('show', 'correct', 'incorrect');
+                });
+            });
+
+            // PDF export function
+            const exportPdfBtn = document.getElementById('export-pdf-btn');
+            const mainContent = document.getElementById('main-content');
+            const loadingOverlay = document.getElementById('loading-overlay');
+
+            exportPdfBtn.addEventListener('click', async () => {
+                if (!window.jspdf || !window.html2canvas) {
+                    console.error("jsPDF or html2canvas library not loaded.");
+                    return;
+                }
+
+                loadingOverlay.classList.add('visible');
+                
+                await new Promise(resolve => setTimeout(resolve, 100));
+
+                try {
+                    const doc = new jspdf.jsPDF('p', 'pt', 'a4');
+                    await doc.html(mainContent, {
+                        callback: function (doc) {
+                            doc.save('daby_english_expressions.pdf');
+                            loadingOverlay.classList.remove('visible');
+                        },
+                        x: 10,
+                        y: 10,
+                        html2canvas: {
+                            scale: 0.8
+                        }
+                    });
+                } catch (error) {
+                    console.error("Failed to generate PDF:", error);
+                    loadingOverlay.classList.remove('visible');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
